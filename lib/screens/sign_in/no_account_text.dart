@@ -1,10 +1,9 @@
 import 'package:e_commerce/constants.dart';
 import 'package:e_commerce/screens/home/home_page.dart';
-import 'package:e_commerce/sign_up/sign_up_page.dart';
+import 'package:e_commerce/screens/sign_up/sign_up_page.dart';
 import 'package:e_commerce/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 
 class NoAccountText extends StatelessWidget {
   const NoAccountText({
