@@ -1,11 +1,15 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:math';
+
 import 'package:e_commerce/constants.dart';
 import 'package:e_commerce/screens/home/home_page.dart';
 import 'package:e_commerce/size_config.dart';
 import 'package:e_commerce/widget/defaultButton.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 class SignInForm extends StatefulWidget {
@@ -18,9 +22,15 @@ class SignInForm extends StatefulWidget {
 class _SignInFormState extends State<SignInForm> {
   final _formKey = GlobalKey<FormState>();
   final List<String> errors = [];
-  late String email;
-  late String password;
+  // late  String email;
+  // late  String password;
+
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
   bool remember = false;
+
+  final _auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -31,12 +41,14 @@ class _SignInFormState extends State<SignInForm> {
         child: Column(
           children: [
             TextFormField(
+              controller: _email,
               keyboardType: TextInputType.emailAddress,
               onSaved: (emailValue) {
                 if (_formKey.currentState!.validate()) {
-                  email = emailValue!;
+                  _email.text = emailValue!;
                 }
               },
+              textInputAction: TextInputAction.next,
               onChanged: (value) {
                 if (value.isNotEmpty && errors.contains(kEmailNullError)) {
                   setState(() {
@@ -72,10 +84,11 @@ class _SignInFormState extends State<SignInForm> {
               height: getProportionateScreenHeight(30),
             ),
             TextFormField(
+              controller: _password,
               obscureText: true,
               onSaved: (passValue) {
                 if (_formKey.currentState!.validate()) {
-                  password = passValue!;
+                  _password.text = passValue!;
                 }
               },
               onChanged: (value) {
@@ -139,16 +152,42 @@ class _SignInFormState extends State<SignInForm> {
             FormError(errors: errors),
             DefaultButton(
               text: "Continue",
-              press: () {
+              press: () async {
                 if (_formKey.currentState!.validate()) {
                   // _formKey.currentState!.save();
+                  print(_email.text.toString());
+                  print(_password.text.toString());
+                  await _auth
+                      .signInWithEmailAndPassword(
+                          email: _email.text, password: _password.text)
+                      .then((uid) => {
+                            Fluttertoast.showToast(msg: "Login Sucessfull"),
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text("Welcome User"),
+                              elevation: 10,
+                            )),
+                            Get.back(closeOverlays: true),
+                            Get.to(HomeScreen(), popGesture: true),
+                          })
+                      .catchError((e) {
+                    print(e.hashCode);
+                    if (e.hashCode.toString() == "505284406") {
+                      Fluttertoast.showToast(msg: "No User Found!");
+                    } else if (e.hashCode.toString() == "185768934") {
+                      Fluttertoast.showToast(msg: "Invalid Password");
+                    } else {
+                      Fluttertoast.showToast(msg: e.toString());
+                    }
+                    // Fluttertoast.showToast(msg: e.toString());
+                  });
+
                   print(_formKey.currentState!.validate());
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text("Welcome User"),
-                    elevation: 10,
-                  ));
-                  Get.back(closeOverlays: true);
-                  Get.to(HomeScreen());
+                  // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  //   content: Text("Welcome User"),
+                  //   elevation: 10,
+                  // ));
+                  // Get.back(closeOverlays: true);
+                  // Get.to(HomeScreen());
 
                   // print(email);
                 }

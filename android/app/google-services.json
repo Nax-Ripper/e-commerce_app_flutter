@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "246119926999",
+    "project_id": "msms-d38b8",
+    "storage_bucket": "msms-d38b8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:246119926999:android:263e5ad4166bc392d4f492",
+        "android_client_info": {
+          "package_name": "com.example.e_commerce"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "246119926999-57ctsv4188oj3aa50lmhtfmgfs27nfcb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARl9gyMs5fEp2qMcep1eSnB5vkyWw8PbY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "246119926999-57ctsv4188oj3aa50lmhtfmgfs27nfcb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

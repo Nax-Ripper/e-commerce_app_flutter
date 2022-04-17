@@ -1,11 +1,16 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce/constants.dart';
+import 'package:e_commerce/model/user_model.dart';
 import 'package:e_commerce/screens/home/home_page.dart';
 import 'package:e_commerce/screens/sign_in/sign_in_form.dart';
 import 'package:e_commerce/size_config.dart';
 import 'package:e_commerce/widget/defaultButton.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 class SignUpForm extends StatefulWidget {
@@ -18,13 +23,20 @@ class SignUpForm extends StatefulWidget {
 class _SignUpFormState extends State<SignUpForm> {
   final _formkey = GlobalKey<FormState>();
   // late String email, password, confirmnPassword;
-  String? email;
+  // String? email;
   // String? password;
   // String? confirmnPassword;
-  TextEditingController password = TextEditingController();
-  TextEditingController confirmPassword = TextEditingController();
-  String? userName;
-  String? phoneNumber;
+  // String? userName;
+  // String? phoneNumber;
+
+  final TextEditingController _username = TextEditingController();
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
+  final TextEditingController _confirmPassword = TextEditingController();
+  final TextEditingController _phoneNumber = TextEditingController();
+
+  final _auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -34,6 +46,8 @@ class _SignUpFormState extends State<SignUpForm> {
           children: [
             TextFormField(
               keyboardType: TextInputType.text,
+              controller: _username,
+              textInputAction: TextInputAction.next,
               validator: (name) {
                 if (name!.isEmpty) {
                   return kNamelNullError;
@@ -42,7 +56,7 @@ class _SignUpFormState extends State<SignUpForm> {
               },
               onSaved: (newName) {
                 if (_formkey.currentState!.validate()) {
-                  userName = newName!;
+                  _username.text = newName!;
                 }
               },
               decoration: inputDeco(
@@ -54,6 +68,8 @@ class _SignUpFormState extends State<SignUpForm> {
             SizedBox(height: getProportionateScreenHeight(30)),
             TextFormField(
                 keyboardType: TextInputType.emailAddress,
+                controller: _email,
+                textInputAction: TextInputAction.next,
                 // ignore: prefer_const_constructors
                 validator: (email) {
                   if (email!.isEmpty) {
@@ -65,14 +81,15 @@ class _SignUpFormState extends State<SignUpForm> {
                 },
                 onSaved: (newEmail) {
                   if (_formkey.currentState!.validate()) {
-                    email = newEmail!;
+                    _email.text = newEmail!;
                   }
                 },
                 decoration:
                     inputDeco("Email", "Enter your email", Icon(Icons.mail))),
             SizedBox(height: getProportionateScreenHeight(30)),
             TextFormField(
-              controller: password,
+              controller: _password,
+              textInputAction: TextInputAction.next,
               keyboardType: TextInputType.text,
               obscureText: true,
               validator: (pass) {
@@ -85,7 +102,7 @@ class _SignUpFormState extends State<SignUpForm> {
               },
               onSaved: (newValue) {
                 if (_formkey.currentState!.validate()) {
-                  password.text = newValue!;
+                  _password.text = newValue!;
                 }
               },
               decoration:
@@ -93,24 +110,27 @@ class _SignUpFormState extends State<SignUpForm> {
             ),
             SizedBox(height: getProportionateScreenHeight(30)),
             TextFormField(
-              controller: confirmPassword,
+              controller: _confirmPassword,
+              textInputAction: TextInputAction.next,
               obscureText: true,
               validator: (cPass) {
                 if (cPass!.isEmpty) {
                   return kPassNullError;
-                } else if (confirmPassword.text != password.text) {
+                } else if (_confirmPassword.text != _password.text) {
                   return kMatchPassError;
                 } else if (cPass.length < 8) {
                   return kShortPassError;
                 }
                 return null;
               },
-              onSaved: (String? newPass) => confirmPassword.text = newPass!,
+              onSaved: (String? newPass) => _confirmPassword.text = newPass!,
               decoration: inputDeco("Confirm Password",
                   "Re-enter your password", Icon(Icons.key)),
             ),
             SizedBox(height: getProportionateScreenHeight(30)),
             TextFormField(
+              controller: _phoneNumber,
+              textInputAction: TextInputAction.next,
               keyboardType: TextInputType.phone,
               validator: (phone) {
                 if (phone!.isEmpty) {
@@ -120,7 +140,7 @@ class _SignUpFormState extends State<SignUpForm> {
               },
               onSaved: (newPhone) {
                 if (_formkey.currentState!.validate()) {
-                  phoneNumber = newPhone;
+                  _phoneNumber.text = newPhone!;
                 }
               },
               decoration: inputDeco(
@@ -129,45 +149,136 @@ class _SignUpFormState extends State<SignUpForm> {
             SizedBox(height: getProportionateScreenHeight(30)),
             DefaultButton(
               text: "Sign In Me!",
-              press: () {
+              press: () async {
                 if (_formkey.currentState!.validate()) {
                   _formkey.currentState!.save();
-                 
-                  Future.delayed(
-                      Duration(
-                        seconds: 1,
-                      ), () {
-                         Get.back();
-                    showModalBottomSheet<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            // ignore: prefer_const_constructors
-                            Text(
-                              "What type of buyer are you ?",
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            DefaultButton(
-                              text: "Normal Buyer",
-                              press: () {
-                                Get.back();
-                                return Get.to(HomeScreen());
-                              },
-                            ),
-                            DefaultButton(
-                              text: "Batch Buyer",
-                              press: () {
-                                Get.back();
-                                return Get.to(HomeScreen());
-                              },
-                            )
-                          ],
-                        );
-                      },
-                    );
+                  await _auth
+                      .createUserWithEmailAndPassword(
+                          email: _email.text, password: _password.text)
+                      .then((value) => {
+                            Future.delayed(
+                                Duration(
+                                  seconds: 1,
+                                ), () {
+                              Get.back();
+                              showModalBottomSheet<void>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      // ignore: prefer_const_constructors
+                                      Text(
+                                        "What type of buyer are you ?",
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                      DefaultButton(
+                                        text: "Normal Buyer",
+                                        press: () {
+                                          Get.back();
+                                          postDetailsToFirestore();
+                                          return Get.to(HomeScreen());
+                                        },
+                                      ),
+                                      DefaultButton(
+                                        text: "Batch Buyer",
+                                        press: () {
+                                          Get.back();
+                                          postDetailsToFirestore();
+                                          return Get.to(HomeScreen());
+                                        },
+                                      )
+                                    ],
+                                  );
+                                },
+                              );
+                            }),
+                          })
+                      .catchError((error) {
+                    print(error.hashCode);
+                    if(error.hashCode.toString()=="34618382"){
+                       Fluttertoast.showToast(msg: "Email is Already taken!");
+                    }else{
+                       Fluttertoast.showToast(msg: error.toString());
+                    }
+                    // Fluttertoast.showToast(msg: error.toString());
                   });
+                  // Future<bool> done = signUp(_email.text, _password.text);
+
+                  // if (done != false) {
+                  //   Future.delayed(
+                  //       Duration(
+                  //         seconds: 1,
+                  //       ), () {
+                  //     Get.back();
+                  //     showModalBottomSheet<void>(
+                  //       context: context,
+                  //       builder: (BuildContext context) {
+                  //         return Column(
+                  //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  //           children: [
+                  //             // ignore: prefer_const_constructors
+                  //             Text(
+                  //               "What type of buyer are you ?",
+                  //               style: TextStyle(fontSize: 20),
+                  //             ),
+                  //             DefaultButton(
+                  //               text: "Normal Buyer",
+                  //               press: () {
+                  //                 Get.back();
+                  //                 return Get.to(HomeScreen());
+                  //               },
+                  //             ),
+                  //             DefaultButton(
+                  //               text: "Batch Buyer",
+                  //               press: () {
+                  //                 Get.back();
+                  //                 return Get.to(HomeScreen());
+                  //               },
+                  //             )
+                  //           ],
+                  //         );
+                  //       },
+                  //     );
+                  //   });
+                  //}
+
+                  // Future.delayed(
+                  //     Duration(
+                  //       seconds: 1,
+                  //     ), () {
+                  //   Get.back();
+                  //   showModalBottomSheet<void>(
+                  //     context: context,
+                  //     builder: (BuildContext context) {
+                  //       return Column(
+                  //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  //         children: [
+                  //           // ignore: prefer_const_constructors
+                  //           Text(
+                  //             "What type of buyer are you ?",
+                  //             style: TextStyle(fontSize: 20),
+                  //           ),
+                  //           DefaultButton(
+                  //             text: "Normal Buyer",
+                  //             press: () {
+                  //               Get.back();
+                  //               return Get.to(HomeScreen());
+                  //             },
+                  //           ),
+                  //           DefaultButton(
+                  //             text: "Batch Buyer",
+                  //             press: () {
+                  //               Get.back();
+                  //               return Get.to(HomeScreen());
+                  //             },
+                  //           )
+                  //         ],
+                  //       );
+                  //     },
+                  //   );
+                  // });
                 }
               },
             )
@@ -176,15 +287,50 @@ class _SignUpFormState extends State<SignUpForm> {
       ),
     );
   }
+
+  Future<bool> signUp(String email, String password) async {
+    if (_formkey.currentState!.validate()) {
+      // await _auth.createUserWithEmailAndPassword(email: email, password: password)
+      //     .then((value) => {
+      //           postDetailsToFirestore(),
+
+      //         })
+      //     .catchError((error) {
+      //   Fluttertoast.showToast(msg: error.toString());
+      // });
+
+      try {
+        var create = await _auth.createUserWithEmailAndPassword(
+            email: email, password: password);
+        postDetailsToFirestore();
+        return true;
+      } on FirebaseAuthException catch (e) {
+        print(e);
+        Fluttertoast.showToast(msg: e.toString());
+        return false;
+      }
+    } else {
+      return false;
+    }
+    // return true;
+  }
+
+  postDetailsToFirestore() async {
+    // calling firebase
+    // calling user model
+    // sending values to firebase
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    User? user = _auth.currentUser;
+
+    MyUser userModel = MyUser();
+
+    // assign values to MyUser class
+    userModel.username = _username.text;
+    userModel.uid = user!.uid;
+    userModel.email = user.email;
+    userModel.phoneNumber = _phoneNumber.text;
+
+    await db.collection("users").doc(user.uid).set(userModel.toMap());
+    Fluttertoast.showToast(msg: "Account Created Successfully");
+  }
 }
-
-// class ShowBottomSheet extends StatelessWidget {
-//   const ShowBottomSheet({Key? key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       child: sh,
-//     );
-//   }
-// }
