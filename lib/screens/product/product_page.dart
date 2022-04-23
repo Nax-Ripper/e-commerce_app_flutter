@@ -3,13 +3,19 @@
 import 'dart:ui';
 
 import 'package:carousel_slider/carousel_slider.dart';
+
+import 'package:e_commerce/bloc/cart/cart_bloc.dart';
+import 'package:e_commerce/constants.dart';
 import 'package:e_commerce/model/wishlist_model.dart';
+import 'package:e_commerce/screens/cart/cart_page.dart';
 import 'package:e_commerce/widget/hero_carousel_cart.dart';
 import 'package:flutter/material.dart';
 
 import 'package:e_commerce/model/Product_model.dart';
 import 'package:e_commerce/widget/custom_appbar.dart';
 import 'package:e_commerce/widget/custom_navbar.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 
 class ProductScreen extends StatefulWidget {
   final Product product;
@@ -23,13 +29,12 @@ class ProductScreen extends StatefulWidget {
 }
 
 class _ProductScreenState extends State<ProductScreen> {
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: CustomAppbar(title: widget.product.name),
         bottomNavigationBar: BottomAppBar(
-          color: Colors.black,
+          color: kPrimaryColor,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20),
             height: 70,
@@ -52,16 +57,26 @@ class _ProductScreenState extends State<ProductScreen> {
                 //     Wishlist().addProduct(widget.product);
                 //   },
                 // ),
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white),
-                    child: Text(
-                      "ADD TO CART",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
-                    ),
-                    onPressed: () {})
+                BlocBuilder<CartBloc, CartState>(
+                  builder: (context, state) {
+                    return ElevatedButton(
+                        style: ElevatedButton.styleFrom(primary: Colors.white),
+                        child: Text(
+                          "ADD TO CART",
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        ),
+                        onPressed: () {
+                          context
+                              .read<CartBloc>()
+                              .add(CartProductAdded(widget.product));
+
+                          Get.to(CartScreen());
+                        });
+                  },
+                )
               ],
             ),
           ),
@@ -94,7 +109,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     width: MediaQuery.of(context).size.width - 10,
                     height: 50,
                     alignment: Alignment.bottomCenter,
-                    color: Colors.black,
+                    color: kPrimaryColor,
                     child: Center(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -105,13 +120,13 @@ class _ProductScreenState extends State<ProductScreen> {
                               widget.product.name,
                               style: TextStyle(
                                   fontSize: 17,
-                                  color: Colors.white,
+                                  color: Colors.black,
                                   fontWeight: FontWeight.w600),
                             ),
                             Text(
                               "RM " + widget.product.price.toString(),
                               style:
-                                  TextStyle(fontSize: 17, color: Colors.white),
+                                  TextStyle(fontSize: 17, color: Colors.black),
                             )
                           ],
                         ),

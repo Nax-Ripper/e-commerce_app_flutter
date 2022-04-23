@@ -1,6 +1,7 @@
 
 // ignore_for_file: prefer_const_constructors
 
+import 'package:e_commerce/constants.dart';
 import 'package:e_commerce/main.dart';
 import 'package:e_commerce/screens/cart/cart_page.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,8 @@ class CustomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
-      color: Colors.black,
+      // color: Colors.black,
+      color: kPrimaryColor,
       child: Container(
         height: 70,
         child: Row(
@@ -26,17 +28,17 @@ class CustomNavBar extends StatelessWidget {
                 onPressed: () {
                   Get.to(HomeScreen());
                 },
-                icon: Icon(Icons.home, color: Colors.white,)),
+                icon: Icon(Icons.home, color: Colors.black,)),
                     IconButton(
                 onPressed: () {
                   Get.to(CartScreen());
                 },
-                icon: Icon(Icons.shopping_cart,color: Colors.white,)),
+                icon: Icon(Icons.shopping_cart,color: Colors.black,)),
                     IconButton(
                 onPressed: () {
                   Get.to(HomeScreen());
                 },
-                icon: Icon(Icons.person,color: Colors.white,))
+                icon: Icon(Icons.person,color: Colors.black,))
           ],
         ),
       ),

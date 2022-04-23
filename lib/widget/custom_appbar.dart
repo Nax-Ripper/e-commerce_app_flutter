@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:e_commerce/constants.dart';
 import 'package:e_commerce/screens/wishlist/wishlist_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,7 @@ class CustomAppbar extends StatelessWidget with PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
         backgroundColor: Colors.transparent,
+        //  backgroundColor: kPrimaryColor,
         elevation: 0,
         title: Center(
          
@@ -23,13 +25,14 @@ class CustomAppbar extends StatelessWidget with PreferredSizeWidget {
             padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
             
             decoration: BoxDecoration(
-              color: Colors.black,
+              // color: Colors.black,
+               color: kPrimaryColor,
               borderRadius: BorderRadius.circular(5)
             ),
             child: Text(
               title,
               style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black,
                   fontSize: 24,
                   fontWeight: FontWeight.bold),
             ),

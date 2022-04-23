@@ -1,6 +1,10 @@
 // ignore_for_file: prefer_const_constructors
 
+
+import 'package:e_commerce/bloc/cart/cart_bloc.dart';
+import 'package:e_commerce/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
 import 'package:e_commerce/model/Product_model.dart';
@@ -12,7 +16,7 @@ class ProductCard extends StatelessWidget {
   const ProductCard({
     Key? key,
     required this.product,
-     this.isWishlist,
+    this.isWishlist,
   }) : super(key: key);
 
   @override
@@ -34,10 +38,10 @@ class ProductCard extends StatelessWidget {
             bottom: 5,
             child: Container(
               height: 60,
-              width: MediaQuery.of(context).size.width/2.4 ,
-              decoration: BoxDecoration(color: Colors.black.withOpacity(0.8)),
+              width: MediaQuery.of(context).size.width / 2.4,
+              decoration: BoxDecoration(color: kPrimaryColor.withOpacity(0.8)),
               child: Padding(
-                 padding: const EdgeInsets.all(4.0),
+                padding: const EdgeInsets.all(4.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -50,39 +54,56 @@ class ProductCard extends StatelessWidget {
                           Text(
                             product.name,
                             style: TextStyle(
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500),
                           ),
                           Text(
                             "RM" + Product.staticProducts[1].price.toString(),
                             style: TextStyle(
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w500),
                           )
                         ],
                       ),
                     ),
-                    Expanded(
-                        child: IconButton(
-                      icon: Icon(
-                        Icons.add_circle_outline,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {},
+                    BlocBuilder<CartBloc, CartState>(
+                      builder: (context, state) {
+                        if (state is CartLoading) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (state is CartLoaded) {
+                          return Expanded(
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.add_circle_outline,
+                                color: Colors.black,
+                              ),
+                              onPressed: () {
+                                context
+                                    .read<CartBloc>()
+                                    .add(CartProductAdded(product));
+                              },
+                            ),
+                          );
+                        } else {
+                          return Text("Something went wrong");
+                        }
+                      },
                     ),
-                
-                    ),
-                  
-                    isWishlist==true? Expanded(
-                        child: IconButton(
-                      icon: Icon(
-                        Icons.delete,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {},
-                    )):SizedBox()
+                    isWishlist == true
+                        ? Expanded(
+                            child: IconButton(
+                            icon: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {},
+                          ))
+                        : SizedBox()
                   ],
                 ),
               ),
