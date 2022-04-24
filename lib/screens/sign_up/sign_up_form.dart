@@ -161,35 +161,53 @@ class _SignUpFormState extends State<SignUpForm> {
                                   seconds: 1,
                                 ), () {
                               Get.back();
+
                               showModalBottomSheet<void>(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      // ignore: prefer_const_constructors
-                                      Text(
-                                        "What type of buyer are you ?",
-                                        style: TextStyle(fontSize: 20),
-                                      ),
-                                      DefaultButton(
-                                        text: "Normal Buyer",
-                                        press: () {
-                                          Get.back();
-                                          postDetailsToFirestore();
-                                          return Get.to(HomeScreen());
-                                        },
-                                      ),
-                                      DefaultButton(
-                                        text: "Batch Buyer",
-                                        press: () {
-                                          Get.back();
-                                          postDetailsToFirestore();
-                                          return Get.to(HomeScreen());
-                                        },
-                                      )
-                                    ],
+                                  return SizedBox(
+                                    height: MediaQuery.of(context).size.height*0.35,
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          child: Column(
+                                            children: [
+                                               SizedBox(height: 10,),
+                                              Text(
+                                                "What type of buyer are you ?",
+                                                style: TextStyle(fontSize: 20),
+                                              ),
+                                              SizedBox(height: 20,),
+                                              DefaultButton(
+                                                text: "Normal Buyer",
+                                                press: () {
+                                                  Get.back();
+                                                  postDetailsToFirestore();
+                                                  return Get.to(HomeScreen());
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: 50,),
+
+                                        SizedBox(
+                                          child: Column(
+                                            children: [
+                                              DefaultButton(
+                                                text: "Batch Buyer",
+                                                press: () {
+                                                  Get.back();
+                                                  postDetailsToFirestore();
+                                                  return Get.to(HomeScreen());
+                                                },
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                        // ignore: prefer_const_constructors
+                                      ],
+                                    ),
                                   );
                                 },
                               );
@@ -197,88 +215,15 @@ class _SignUpFormState extends State<SignUpForm> {
                           })
                       .catchError((error) {
                     print(error.hashCode);
-                    if(error.hashCode.toString()=="34618382"){
-                       Fluttertoast.showToast(msg: "Email is Already taken!");
-                    }else{
-                       Fluttertoast.showToast(msg: error.toString());
+                    if (error.hashCode.toString() == "34618382") {
+                      Fluttertoast.showToast(msg: "Email is Already taken!");
+                    } else {
+                      Fluttertoast.showToast(msg: error.toString());
                     }
                     // Fluttertoast.showToast(msg: error.toString());
                   });
                   // Future<bool> done = signUp(_email.text, _password.text);
 
-                  // if (done != false) {
-                  //   Future.delayed(
-                  //       Duration(
-                  //         seconds: 1,
-                  //       ), () {
-                  //     Get.back();
-                  //     showModalBottomSheet<void>(
-                  //       context: context,
-                  //       builder: (BuildContext context) {
-                  //         return Column(
-                  //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  //           children: [
-                  //             // ignore: prefer_const_constructors
-                  //             Text(
-                  //               "What type of buyer are you ?",
-                  //               style: TextStyle(fontSize: 20),
-                  //             ),
-                  //             DefaultButton(
-                  //               text: "Normal Buyer",
-                  //               press: () {
-                  //                 Get.back();
-                  //                 return Get.to(HomeScreen());
-                  //               },
-                  //             ),
-                  //             DefaultButton(
-                  //               text: "Batch Buyer",
-                  //               press: () {
-                  //                 Get.back();
-                  //                 return Get.to(HomeScreen());
-                  //               },
-                  //             )
-                  //           ],
-                  //         );
-                  //       },
-                  //     );
-                  //   });
-                  //}
-
-                  // Future.delayed(
-                  //     Duration(
-                  //       seconds: 1,
-                  //     ), () {
-                  //   Get.back();
-                  //   showModalBottomSheet<void>(
-                  //     context: context,
-                  //     builder: (BuildContext context) {
-                  //       return Column(
-                  //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  //         children: [
-                  //           // ignore: prefer_const_constructors
-                  //           Text(
-                  //             "What type of buyer are you ?",
-                  //             style: TextStyle(fontSize: 20),
-                  //           ),
-                  //           DefaultButton(
-                  //             text: "Normal Buyer",
-                  //             press: () {
-                  //               Get.back();
-                  //               return Get.to(HomeScreen());
-                  //             },
-                  //           ),
-                  //           DefaultButton(
-                  //             text: "Batch Buyer",
-                  //             press: () {
-                  //               Get.back();
-                  //               return Get.to(HomeScreen());
-                  //             },
-                  //           )
-                  //         ],
-                  //       );
-                  //     },
-                  //   );
-                  // });
                 }
               },
             )

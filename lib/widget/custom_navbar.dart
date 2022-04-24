@@ -4,6 +4,7 @@
 import 'package:e_commerce/constants.dart';
 import 'package:e_commerce/main.dart';
 import 'package:e_commerce/screens/cart/cart_page.dart';
+import 'package:e_commerce/screens/profile/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -36,7 +37,7 @@ class CustomNavBar extends StatelessWidget {
                 icon: Icon(Icons.shopping_cart,color: Colors.black,)),
                     IconButton(
                 onPressed: () {
-                  Get.to(HomeScreen());
+                  Get.to(ProfileScreen());
                 },
                 icon: Icon(Icons.person,color: Colors.black,))
           ],
