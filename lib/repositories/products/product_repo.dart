@@ -11,8 +11,8 @@ class ProductRepo extends BaseProductRepo{
 
   @override
   Stream<List<Product>> getAllProduct() {
-    return _firebaseFirestore.collection("products").snapshots().map((event) {
-      return event.docs.map((e) => Product.fromSnapshot(e)).toList();
+    return _firebaseFirestore.collection("products").snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => Product.fromSnapshot(doc)).toList();
     });
   }
 

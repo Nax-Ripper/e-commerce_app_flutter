@@ -59,7 +59,7 @@ class ProductCard extends StatelessWidget {
                                 fontWeight: FontWeight.w500),
                           ),
                           Text(
-                            "RM" + Product.staticProducts[1].price.toString(),
+                            "RM" + product.price.toString(),
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 15,

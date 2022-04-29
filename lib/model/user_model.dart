@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 class MyUser extends Equatable {
-  String? uid;
-  String? username;
-  String? email;
-  String? phoneNumber;
+  late final String? uid;
+  late final String? username;
+  late final String? email;
+  late final String? phoneNumber;
 
   MyUser({
      this.uid,
@@ -12,6 +13,15 @@ class MyUser extends Equatable {
      this.email,
      this.phoneNumber,
   });
+
+  static MyUser formSnapshot(DocumentSnapshot snapshot) {
+    MyUser myUser = MyUser(
+        email: snapshot["email"],
+        phoneNumber: snapshot["phoneNumber"],
+        uid: snapshot["uid"],
+        username: snapshot["username"]);
+    return myUser;
+  }
 
   // form firebase
   factory MyUser.fromMap(map) {
@@ -22,14 +32,13 @@ class MyUser extends Equatable {
         phoneNumber: map["phoneNumber"]);
   }
 
-  // sending to firebase 
+  // sending to firebase
   Map<String, dynamic> toMap() {
     return {
-      "uid":uid,
-      "username":username,
-      "email":email,
-      "phoneNumber":phoneNumber
-
+      "uid": uid,
+      "username": username,
+      "email": email,
+      "phoneNumber": phoneNumber
     };
   }
 

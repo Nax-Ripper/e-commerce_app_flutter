@@ -17,6 +17,9 @@ class CustomAppbar extends StatelessWidget with PreferredSizeWidget {
     return AppBar(
         backgroundColor: Colors.transparent,
         //  backgroundColor: kPrimaryColor,
+        leading: IconButton(onPressed: (){
+          Get.back();
+        }, icon: Icon(Icons.arrow_back_ios),),
         elevation: 0,
         title: Center(
          

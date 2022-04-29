@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
@@ -9,7 +10,7 @@ class Product extends Equatable {
   final bool isRecomended;
   final bool isPopular;
 
-  Product({
+  const Product({
     required this.name,
     required this.category,
     required this.imageURL,
@@ -31,7 +32,7 @@ class Product extends Equatable {
   }
 
   static List<Product> staticProducts = [
-    Product(
+    const Product(
         name: "Sprite",
         category: "Soft Drinks",
         imageURL:
@@ -39,7 +40,7 @@ class Product extends Equatable {
         price: 5.10,
         isRecomended: true,
         isPopular: true),
-    Product(
+   const Product(
         name: "Coca-Cola",
         category: "Soft Drinks",
         imageURL:
@@ -47,7 +48,7 @@ class Product extends Equatable {
         price: 5.00,
         isRecomended: true,
         isPopular: true),
-    Product(
+   const Product(
         name: "Pepsi",
         category: "Soft Drinks",
         imageURL:
@@ -55,7 +56,7 @@ class Product extends Equatable {
         price: 5.20,
         isRecomended: true,
         isPopular: true),
-    Product(
+   const Product(
         name: "Fanta",
         category: "Soft Drinks",
         imageURL:
@@ -63,17 +64,17 @@ class Product extends Equatable {
         price: 5.10,
         isRecomended: true,
         isPopular: false),
-    Product(
+   const Product(
         name: "Jacobs",
-        category: "Biscut",
+        category: "Biscuits",
         imageURL:
             "https://secure.ap-tescoassets.com/assets/MY/983/7622210974983/ShotType1_540x540.jpg",
         price: 6.00,
         isRecomended: false,
         isPopular: true),
-    Product(
+  const  Product(
         name: "Oat krunch",
-        category: "Biscut",
+        category: "Biscuits",
         imageURL:
             "https://www.pantryexpress.my/862-large_default/munchy-s-oat-krunch-crackers-15x26g-chunky-hazelnut.jpg",
         price: 10.10,
