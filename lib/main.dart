@@ -2,9 +2,11 @@
 
 import 'package:e_commerce/bloc/cart/cart_bloc.dart';
 import 'package:e_commerce/bloc/category/category_bloc.dart';
+import 'package:e_commerce/bloc/checkout/checkout_bloc.dart';
 import 'package:e_commerce/bloc/product/product_bloc.dart';
 import 'package:e_commerce/constants.dart';
 import 'package:e_commerce/repositories/categories/category_repo.dart';
+import 'package:e_commerce/repositories/checkout/checkout_repo.dart';
 import 'package:e_commerce/repositories/products/product_repo.dart';
 import 'package:e_commerce/screens/checkout/checkout_page.dart';
 import 'package:e_commerce/screens/splash/splash_page.dart';
@@ -12,6 +14,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,6 +51,10 @@ class MyApp extends StatelessWidget {
                   LoadProduct(),
                 ),
             ),
+
+            BlocProvider(
+              create: (context) => CheckoutBloc(cartBloc: context.read<CartBloc>(),checkoutRepo: CheckoutRepo(),),
+            )
       ],
       child: GetMaterialApp(
           title: 'Flutter Demo',
