@@ -22,6 +22,7 @@ class SignUpForm extends StatefulWidget {
 
 class _SignUpFormState extends State<SignUpForm> {
   final _formkey = GlobalKey<FormState>();
+
   // late String email, password, confirmnPassword;
   // String? email;
   // String? password;
@@ -152,77 +153,117 @@ class _SignUpFormState extends State<SignUpForm> {
               press: () async {
                 if (_formkey.currentState!.validate()) {
                   _formkey.currentState!.save();
-                  await _auth
-                      .createUserWithEmailAndPassword(
-                          email: _email.text, password: _password.text)
-                      .then((value) => {
-                            Future.delayed(
-                                Duration(
-                                  seconds: 1,
-                                ), () {
-                              Get.back();
 
-                              showModalBottomSheet<void>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return SizedBox(
-                                    height: MediaQuery.of(context).size.height*0.35,
-                                    child: Column(
-                                      children: [
-                                        SizedBox(
-                                          child: Column(
-                                            children: [
-                                               SizedBox(height: 10,),
-                                              Text(
-                                                "What type of buyer are you ?",
-                                                style: TextStyle(fontSize: 20),
-                                              ),
-                                              SizedBox(height: 20,),
-                                              DefaultButton(
-                                                text: "Normal Buyer",
-                                                press: () {
-                                                  Get.back();
-                                                  postDetailsToFirestore();
-                                                  return Get.to(HomeScreen());
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(height: 50,),
+                  try {
+                    await _auth.createUserWithEmailAndPassword(
+                        email: _email.text, password: _password.text);
+                    FirebaseFirestore db = FirebaseFirestore.instance;
 
-                                        SizedBox(
-                                          child: Column(
-                                            children: [
-                                              DefaultButton(
-                                                text: "Batch Buyer",
-                                                press: () {
-                                                  Get.back();
-                                                  postDetailsToFirestore();
-                                                  return Get.to(HomeScreen());
-                                                },
-                                              )
-                                            ],
-                                          ),
-                                        )
-                                        // ignore: prefer_const_constructors
-                                      ],
-                                    ),
-                                  );
-                                },
-                              );
-                            }),
-                          })
-                      .catchError((error) {
-                    print(error.hashCode);
-                    if (error.hashCode.toString() == "34618382") {
-                      Fluttertoast.showToast(msg: "Email is Already taken!");
-                    } else {
-                      Fluttertoast.showToast(msg: error.toString());
-                    }
-                    // Fluttertoast.showToast(msg: error.toString());
-                  });
-                  // Future<bool> done = signUp(_email.text, _password.text);
+                    MyUser userModel = MyUser();
+                    User? user = _auth.currentUser;
+
+                    // userModel.username = _username.text;
+                    // userModel.uid = user!.uid.toString();
+                    // userModel.email = user.email;
+                    // userModel.phoneNumber = _phoneNumber.text;
+
+                    await db.collection("users").doc(user!.uid).set({
+                      "uid": user.uid.toString(),
+                      "username": _username.text,
+                      "email": user.email,
+                      "phoneNumber": _phoneNumber.text
+                    });
+                    Fluttertoast.showToast(msg: "Account Created Successfully");
+                    Get.to(HomeScreen());
+                  } catch (e) {
+                    print(e.toString());
+                    Fluttertoast.showToast(msg: e.toString());
+                  }
+                  // await _auth
+                  //     .createUserWithEmailAndPassword(
+                  //         email: _email.text, password: _password.text)
+                  //     .then((value) => {
+                  //           Future.delayed(
+                  //               Duration(
+                  //                 seconds: 1,
+                  //               ), () {
+                  //             // Get.back();
+                  //             // postDetailsToFirestore();
+                  //             // userModel.email = _email.text;
+                  //             userModel.uid = _auth.currentUser!.uid;
+                  //             userModel.username = _username.text;
+                  //             userModel.email = _auth.currentUser!.email;
+                  //             userModel.phoneNumber = _phoneNumber.text;
+
+                  //              db.collection("users").doc(_auth.currentUser!.uid).set(userModel.toMap());
+                  //             Get.to(HomeScreen());
+                  //             // showModalBottomSheet<void>(
+                  //             //   context: context,
+                  //             //   builder: (BuildContext context) {
+                  //             //     return SizedBox(
+                  //             //       height: MediaQuery.of(context).size.height *
+                  //             //           0.35,
+                  //             //       child: Column(
+                  //             //         children: [
+                  //             //           SizedBox(
+                  //             //             child: Column(
+                  //             //               children: [
+                  //             //                 SizedBox(
+                  //             //                   height: 10,
+                  //             //                 ),
+                  //             //                 Text(
+                  //             //                   "What type of buyer are you ?",
+                  //             //                   style: TextStyle(fontSize: 20),
+                  //             //                 ),
+                  //             //                 SizedBox(
+                  //             //                   height: 20,
+                  //             //                 ),
+                  //             //                 DefaultButton(
+                  //             //                   text: "Normal Buyer",
+                  //             //                   press: () async {
+                  //             //                     Get.back();
+                  //             //                     postDetailsToFirestore();
+                  //             //                   },
+                  //             //                 ),
+                  //             //               ],
+                  //             //             ),
+                  //             //           ),
+                  //             //           SizedBox(
+                  //             //             height: 50,
+                  //             //           ),
+
+                  //             //           SizedBox(
+                  //             //             child: Column(
+                  //             //               children: [
+                  //             //                 DefaultButton(
+                  //             //                   text: "Batch Buyer",
+                  //             //                   press: () async {
+                  //             //                     // await db.collection("test").doc().set({"hello":12});
+                  //             //                     Get.back();
+                  //             //                     postDetailsToFirestore();
+                  //             //                   },
+                  //             //                 )
+                  //             //               ],
+                  //             //             ),
+                  //             //           )
+                  //             //           // ignore: prefer_const_constructors
+                  //             //         ],
+                  //             //       ),
+                  //             //     );
+                  //             //   },
+                  //             // );
+                  //           }),
+                  //         })
+                  //     .catchError((error) {
+                  //   print(error.hashCode);
+                  //   if (error.hashCode.toString() == "34618382") {
+                  //     Fluttertoast.showToast(msg: "Email is Already taken!");
+                  //   } else {
+                  //     Fluttertoast.showToast(msg: error.toString());
+                  //   }
+                  //   // Fluttertoast.showToast(msg: error.toString());
+                  // });
+                  // // Future<bool> done = signUp(_email.text, _password.text);
 
                 }
               },
@@ -247,7 +288,7 @@ class _SignUpFormState extends State<SignUpForm> {
       try {
         var create = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
-        postDetailsToFirestore();
+        await postDetailsToFirestore();
         return true;
       } on FirebaseAuthException catch (e) {
         print(e);
@@ -260,18 +301,19 @@ class _SignUpFormState extends State<SignUpForm> {
     // return true;
   }
 
-  postDetailsToFirestore() async {
+  Future<void> postDetailsToFirestore() async {
     // calling firebase
     // calling user model
     // sending values to firebase
     FirebaseFirestore db = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
+    print(user!.uid);
 
     MyUser userModel = MyUser();
 
     // assign values to MyUser class
     userModel.username = _username.text;
-    userModel.uid = user!.uid;
+    userModel.uid = user.uid.toString();
     userModel.email = user.email;
     userModel.phoneNumber = _phoneNumber.text;
 

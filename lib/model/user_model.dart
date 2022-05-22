@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 class MyUser extends Equatable {
-  late final String? uid;
-  late final String? username;
-  late final String? email;
-  late final String? phoneNumber;
+  late  String? uid;
+  late  String? username;
+  late  String? email;
+  late  String? phoneNumber;
 
   MyUser({
      this.uid,

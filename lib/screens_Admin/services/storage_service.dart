@@ -6,14 +6,15 @@ import 'package:image_picker/image_picker.dart';
 class StorageService {
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
+  
 
   // final FirebaseStorage storage = FirebaseStorage.instance;
 
   Future<void> uploadImage(XFile image) async {
-    var bucket = "gs://msms-d38b8.appspot.com";
+    // var bucket = "gs://msms-d38b8.appspot.com";
     // await storage.ref("product_images/${image.name}").putFile(File(image.path));
    
-    storage.bucket = bucket;
+    // storage.bucket = bucket;
      await storage
         .ref()
         .child("product_images/${image.name}")

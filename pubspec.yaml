@@ -33,6 +33,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   emoji_alert: ^1.1.0
   equatable: null
+  firebase_app_check: ^0.0.6+12
   firebase_auth: null
   firebase_core: null
   firebase_storage: ^10.2.16
