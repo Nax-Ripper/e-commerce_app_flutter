@@ -1,5 +1,6 @@
 import 'package:e_commerce/constants.dart';
 import 'package:e_commerce/screens/product/product_page.dart';
+import 'package:e_commerce/screens_Admin/order/order_screen.dart';
 import 'package:e_commerce/screens_Admin/product/product_screen.dart';
 import 'package:e_commerce/widget/custom_appbar.dart';
 import 'package:flutter/material.dart';
@@ -23,10 +24,24 @@ class AdminHomeScreen extends StatelessWidget {
               height: 150,
               
             child:  InkWell(
-              child: Card(
+              child: const Card(
                 child: Center(child: Text("Go to Products"),
               ),),
               onTap: ()=>Get.to(AdminProductScreen()) ,
+            ),
+            ),
+
+
+             Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+              // width: double.infinity,
+              height: 150,
+              
+            child:  InkWell(
+              child: const Card(
+                child: Center(child: Text("Go to Orders"),
+              ),),
+              onTap: ()=>Get.to(const OrderScreen()) ,
             ),
             )
           ],

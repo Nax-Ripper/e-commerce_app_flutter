@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce/screens_Admin/product/add_product_screen.dart';
+import 'package:e_commerce/screens_Admin/services/database_service.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -12,11 +15,17 @@ class AdminProductScreen extends StatelessWidget {
   AdminProductScreen({Key? key}) : super(key: key);
 
   final ProductController productContoller = Get.put(ProductController());
+  DatabaseService databaseService = DatabaseService();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       appBar: AppBar(title: const Text("Product Screen",style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),),
+        appBar: AppBar(
+          title: const Text(
+            "Product Screen",
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+        ),
         // appBar: AppBar(title: Text("Product Screen")),
         backgroundColor: kPrimaryColor,
         body: Column(
@@ -48,20 +57,20 @@ class AdminProductScreen extends StatelessWidget {
                   )),
             ),
             Expanded(
-              child: ListView.builder(
-                  // itemCount: AdminProduct.staticProducts.length,
-                  itemCount: productContoller.adminProduct.length,
-                  itemBuilder: ((context, i) {
-                    return Obx(
-                      () => SizedBox(
+              child: Obx(
+                () => ListView.builder(
+                    // itemCount: AdminProduct.staticProducts.length,
+                    itemCount: productContoller.adminProduct.length,
+                    itemBuilder: ((context, i) {
+                      return (SizedBox(
                           height: 210,
                           child: AdminProductCard(
                             i: i,
                             // adminProduct: AdminProduct.staticProducts[i],
                             adminProduct: productContoller.adminProduct[i],
-                          )),
-                    );
-                  })),
+                          )));
+                    })),
+              ),
             )
           ],
         ));
@@ -111,8 +120,8 @@ class AdminProductCard extends StatelessWidget {
               Row(
                 children: [
                   SizedBox(
-                    height: 60,
-                    width: 60,
+                    height: 70,
+                    width: 70,
                     child: Image.network(
                       adminProduct.imageUrl,
                       fit: BoxFit.cover,
@@ -121,18 +130,19 @@ class AdminProductCard extends StatelessWidget {
                   const SizedBox(
                     width: 10,
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(children: [
-                        const Text(
-                          "Price",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        Slider(
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(children: [
+                          const Text(
+                            "Price",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          Slider(
                             value: adminProduct.price,
-                            min: 0,
+                            min: 1,
                             max: 50,
                             divisions: 10,
                             thumbColor: Colors.black,
@@ -141,21 +151,27 @@ class AdminProductCard extends StatelessWidget {
                             onChanged: (price) {
                               productContoller.updateProductPrice(
                                   i, adminProduct, price);
-                            }),
-                        Text(
-                          "RM " + adminProduct.price.toString(),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
+                            },
+                            onChangeEnd: (value) {
+                              print(value);
+                              productContoller.saveNewProductPrice(
+                                  adminProduct, "price", value);
+                            },
                           ),
-                        )
-                      ]),
-                      Row(children: [
-                        const Text(
-                          "Qty",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        Slider(
+                          Text(
+                            "RM " + adminProduct.price.toString(),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        ]),
+                        Row(children: [
+                          const Text(
+                            "Qty",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          Slider(
                             value: adminProduct.quantity.toDouble(),
                             min: 0,
                             max: 100,
@@ -166,13 +182,27 @@ class AdminProductCard extends StatelessWidget {
                             onChanged: (qty) {
                               productContoller.updateProductQuantity(
                                   i, adminProduct, qty.toInt());
-                            }),
-                        Text(
-                          "${adminProduct.quantity.toInt()}",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        )
-                      ])
-                    ],
+                            },
+                            onChangeEnd: (value) {
+                              var qty = value.toString();
+                              var qtyy = double.parse(qty);
+                              var dqty = qtyy.truncate();
+                              productContoller.saveNewProductQuantity(
+                                  adminProduct,
+                                  "quantity",
+                                  value
+                                  
+                                  
+                                  );
+                            },
+                          ),
+                          Text(
+                            "${adminProduct.quantity.toInt()}",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          )
+                        ])
+                      ],
+                    ),
                   )
                 ],
               )

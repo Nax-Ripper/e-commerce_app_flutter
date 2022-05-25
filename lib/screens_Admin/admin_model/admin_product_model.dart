@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:e_commerce/model/category_model.dart';
@@ -64,7 +65,7 @@ class AdminProduct extends Equatable {
     };
   }
 
-  factory AdminProduct.fromMap(Map<String, dynamic> map) {
+  factory AdminProduct.fromSnapshot(DocumentSnapshot map) {
     return AdminProduct(
       id: map['id']?.toInt() ?? 0,
       name: map['name'] ?? '',
@@ -80,8 +81,7 @@ class AdminProduct extends Equatable {
 
   String toJson() => json.encode(toMap());
 
-  factory AdminProduct.fromJson(String source) =>
-      AdminProduct.fromMap(json.decode(source));
+
 
   @override
   String toString() {

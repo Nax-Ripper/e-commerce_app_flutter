@@ -1,3 +1,5 @@
+import 'package:e_commerce/screens_Admin/admin_model/admin_product_model.dart';
+import 'package:e_commerce/screens_Admin/services/database_service.dart';
 import 'package:e_commerce/screens_Admin/services/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -16,6 +18,7 @@ class AddProductScreen extends StatelessWidget {
   final ProductController _productController = Get.find();
   final StorageService _storageService = StorageService();
   final ImagePicker _picker = ImagePicker();
+  DatabaseService database = DatabaseService();
 
   @override
   Widget build(BuildContext context) {
@@ -140,8 +143,43 @@ class AddProductScreen extends StatelessWidget {
                 ),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () {
-                      print(_productController.newProduct);
+                    onPressed: () async {
+                      try {
+                        print(_productController.newProduct);
+                        String quantityStr = _productController
+                            .newProduct["quantity"]
+                            .toString();
+                        print(quantityStr);
+                        double quantity = double.parse(quantityStr);
+                        print(quantity.truncate());
+                        await database.addProduct(
+                          AdminProduct(
+                              description:
+                                  _productController.newProduct["description"],
+                              id: int.parse(
+                                  _productController.newProduct["id"]),
+                              name: _productController.newProduct["name"],
+                              category:
+                                  _productController.newProduct["category"],
+                              imageUrl:
+                                  _productController.newProduct["imageUrl"],
+                              isRecomended:
+                                  _productController.newProduct["isRecomended"],
+                              isPopular:
+                                  _productController.newProduct["isPopular"],
+                              price: double.parse(_productController
+                                  .newProduct["price"]
+                                  .toString()),
+                              quantity: quantity.toInt()
+                              // quantity: int.parse(_productController.newProduct["quantity"].toString()),
+                              ),
+                        );
+                      } catch (e) {
+                        Fluttertoast.showToast(msg: "Upload Unsuccessful");
+                      }
+
+                      Fluttertoast.showToast(
+                          msg: "Product uploaded Successfully");
                     },
                     child: const Text("Save"),
                     style: ElevatedButton.styleFrom(primary: Colors.black),
@@ -160,14 +198,17 @@ class AddProductScreen extends StatelessWidget {
       required String name,
       required ProductController pController}) {
     return Card(
-      child: TextFormField(
-        decoration: InputDecoration(
-          hintText: hinText,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: TextFormField(
+          decoration: InputDecoration(
+            hintText: hinText,
+          ),
+          onChanged: (value) {
+            pController.newProduct
+                .update(name, (_) => value, ifAbsent: (() => value));
+          },
         ),
-        onChanged: (value) {
-          pController.newProduct
-              .update(name, (_) => value, ifAbsent: (() => value));
-        },
       ),
     );
   }
@@ -200,7 +241,7 @@ class _BuildSlider extends StatelessWidget {
         child: Slider(
             value: (controllerValue == null) ? 0 : controllerValue!,
             min: 0,
-            max: 100,
+            max: 50,
             divisions: 10,
             thumbColor: Colors.black,
             activeColor: Colors.orange[900],
