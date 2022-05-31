@@ -1,12 +1,16 @@
 import 'package:e_commerce/screens_Admin/admin_model/admin_product_model.dart';
+import 'package:e_commerce/screens_Admin/controllers/order_Controller.dart';
 import 'package:flutter/material.dart';
 
 import 'package:e_commerce/constants.dart';
 import 'package:e_commerce/screens_Admin/order/order_model.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class OrderScreen extends StatelessWidget {
-  const OrderScreen({Key? key}) : super(key: key);
+  OrderScreen({Key? key}) : super(key: key);
+
+  final OrderController orderController = Get.put(OrderController());
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +25,13 @@ class OrderScreen extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-                itemCount: Order.orders.length,
-                itemBuilder: (BuildContext context, index) {
-                  return OrderCard(order: Order.orders[index]);
-                }),
+            child: Obx(
+              () => ListView.builder(
+                  itemCount: orderController.pendingOrder.length,
+                  itemBuilder: (BuildContext context, index) {
+                    return OrderCard(order: orderController.pendingOrder[index]);
+                  }),
+            ),
           )
         ],
       ),
@@ -34,12 +40,12 @@ class OrderScreen extends StatelessWidget {
 }
 
 class OrderCard extends StatelessWidget {
-  Order order;
+  final Order order;
   OrderCard({
     Key? key,
     required this.order,
   }) : super(key: key);
-
+  final OrderController orderController = Get.find();
   @override
   Widget build(BuildContext context) {
     List<AdminProduct> products = AdminProduct.staticProducts
@@ -77,7 +83,7 @@ class OrderCard extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 10),
                       child: Card(
                         color: kPrimaryColor.withOpacity(0.8),
-                        
+
                         elevation: 10,
                         // borderOnForeground: true,
                         child: Row(
@@ -99,7 +105,8 @@ class OrderCard extends StatelessWidget {
                                 Text(
                                   products[index].name,
                                   style: const TextStyle(
-                                      fontSize: 14, fontWeight: FontWeight.bold),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(
                                   height: 3,
@@ -109,12 +116,12 @@ class OrderCard extends StatelessWidget {
                                   child: Text(
                                     products[index].description,
                                     style: const TextStyle(
-                                        fontSize: 12, fontWeight: FontWeight.bold),
-                                        overflow: TextOverflow.clip,
-                                        maxLines: 2,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
+                                    overflow: TextOverflow.clip,
+                                    maxLines: 2,
                                   ),
                                 ),
-                                
                               ],
                             )
                           ],
@@ -163,22 +170,46 @@ class OrderCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton(
+                  order.isAccepted ?
+                    ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         primary: Colors.green[700],
                         minimumSize: const Size(140, 40)),
-                    onPressed: () {},
+                    onPressed: () {
+                      orderController.updateOrder(
+                          order, "isDelivered", !order.isDelivered);
+                    },
+                    child: const Text(
+                      "Deliver",
+                      style: TextStyle(
+                        fontSize: 14,
+                      ),
+                    ),
+                  ): ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        primary: Colors.green[700],
+                        minimumSize: const Size(140, 40)),
+                    onPressed: () {
+                      orderController.updateOrder(
+                          order, "isAccept", !order.isAccepted);
+                    },
                     child: const Text(
                       "Accept",
                       style: TextStyle(
                         fontSize: 14,
                       ),
                     ),
-                  ),
+                  )
+
+                  ,
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        primary: Colors.red[800], minimumSize: const Size(140, 40)),
-                    onPressed: () {},
+                        primary: Colors.red[800],
+                        minimumSize: const Size(140, 40)),
+                    onPressed: () {
+                      orderController.updateOrder(
+                          order, "isCancled", !order.isCancled);
+                    },
                     child: const Text(
                       "Cancel",
                       style: TextStyle(fontSize: 14),

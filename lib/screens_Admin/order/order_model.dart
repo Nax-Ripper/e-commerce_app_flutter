@@ -12,8 +12,9 @@ class Order extends Equatable {
   final double totall;
   final bool isAccepted;
   final bool isDelivered;
+  final bool isCancled;
   final DateTime createdAt;
-  const Order({
+  const Order( {
     required this.id,
     required this.customerId,
     required this.productsIds,
@@ -22,6 +23,7 @@ class Order extends Equatable {
     required this.totall,
     required this.isAccepted,
     required this.isDelivered,
+    required this.isCancled,
     required this.createdAt,
   });
 
@@ -34,6 +36,7 @@ class Order extends Equatable {
     double? totall,
     bool? isAccepted,
     bool? isDelivered,
+    bool? isCancled,
     DateTime? createdAt,
   }) {
     return Order(
@@ -46,6 +49,7 @@ class Order extends Equatable {
       isAccepted: isAccepted ?? this.isAccepted,
       isDelivered: isDelivered ?? this.isDelivered,
       createdAt: createdAt ?? this.createdAt,
+      isCancled: isCancled?? this.isCancled,
     );
   }
 
@@ -73,7 +77,8 @@ class Order extends Equatable {
       totall: map['totall']?.toDouble() ?? 0.0,
       isAccepted: map['isAccepted'] ?? false,
       isDelivered: map['isDelivered'] ?? false,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt']),
+      isCancled: map['isCancled'] ?? false,
+      createdAt: map['createdAt'].toDate(),
     );
   }
 
@@ -111,35 +116,31 @@ class Order extends Equatable {
         totall: 30,
         isAccepted: false,
         isDelivered: false,
+        isCancled: false,
         createdAt: DateTime.now()),
-
-
-
     Order(
         id: 2,
         customerId: 2566,
-        productsIds: [1, 2,3],
+        productsIds: [1, 2, 3],
         deliveryFee: 10,
         subtotal: 23,
         totall: 33,
         isAccepted: false,
         isDelivered: false,
+         isCancled: false,
         createdAt: DateTime.now()),
-
     Order(
         id: 3,
         customerId: 5699,
-        productsIds: [1, 2,6,3],
+        productsIds: [1, 2, 6, 3],
         deliveryFee: 10,
         subtotal: 10,
         totall: 20,
         isAccepted: false,
         isDelivered: false,
+         isCancled: false,
         createdAt: DateTime.now()),
-
-
-
-        Order(
+    Order(
         id: 4,
         customerId: 2569,
         productsIds: [1, 2],
@@ -148,6 +149,7 @@ class Order extends Equatable {
         totall: 50,
         isAccepted: false,
         isDelivered: false,
+         isCancled: false,
         createdAt: DateTime.now()),
   ];
 }

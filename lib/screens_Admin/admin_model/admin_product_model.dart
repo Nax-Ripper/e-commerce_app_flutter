@@ -113,6 +113,7 @@ class AdminProduct extends Equatable {
         price: 5.10,
         description: "This is a product",
         isRecomended: true,
+        quantity: 2,
         isPopular: true),
     AdminProduct(
         id: 2,

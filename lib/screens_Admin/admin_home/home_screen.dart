@@ -41,7 +41,7 @@ class AdminHomeScreen extends StatelessWidget {
               child: const Card(
                 child: Center(child: Text("Go to Orders"),
               ),),
-              onTap: ()=>Get.to(const OrderScreen()) ,
+              onTap: ()=>Get.to( OrderScreen()) ,
             ),
             )
           ],

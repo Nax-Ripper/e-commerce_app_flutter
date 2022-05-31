@@ -1,8 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce/screens_Admin/admin_model/admin_product_model.dart';
 
+import '../order/order_model.dart';
+
 class DatabaseService {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+
+  Stream<List<Order>> getPendingOrders() {
+    return _firebaseFirestore
+        .collection("Orders")
+        .where("isDelivered", isEqualTo: false)
+        .where("isCancled", isEqualTo: false)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((docs) => Order.formSnapshot(docs)).toList();
+    });
+  }
+
+  Stream<List<Order>> getOrders() {
+    return _firebaseFirestore.collection("Orders").snapshots().map((snapshot) {
+      return snapshot.docs.map((docs) => Order.formSnapshot(docs)).toList();
+    });
+  }
 
   Stream<List<AdminProduct>> getProducts() {
     return _firebaseFirestore
@@ -35,8 +54,13 @@ class DatabaseService {
       print(qsnap.docs.isEmpty);
       qsnap.docs.first.reference.update({field: newValue});
     });
-
-  
   }
- 
+
+  Future<void> updateOrder(Order order, String field, dynamic value) async {
+    await _firebaseFirestore
+        .collection("Orders")
+        .where("id", isEqualTo: order.id)
+        .get()
+        .then((qsnap) => qsnap.docs.first.reference.update({field: value}));
+  }
 }

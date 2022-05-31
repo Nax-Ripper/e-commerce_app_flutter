@@ -1,16 +1,43 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce/bloc/checkout/checkout_bloc.dart';
 import 'package:e_commerce/constants.dart';
+import 'package:e_commerce/model/user_model.dart';
+import 'package:e_commerce/screens/order_conformation/order_conformation_screen.dart';
 import 'package:e_commerce/widget/custom_appbar.dart';
 import 'package:e_commerce/widget/order_summary.dart';
 import 'package:emoji_alert/arrays.dart';
 import 'package:emoji_alert/emoji_alert.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 
-class CheckoutScreen extends StatelessWidget {
+class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({Key? key}) : super(key: key);
+
+  @override
+  State<CheckoutScreen> createState() => _CheckoutScreenState();
+}
+
+class _CheckoutScreenState extends State<CheckoutScreen> {
+  User? user = FirebaseAuth.instance.currentUser;
+  MyUser loggedInUser = MyUser();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      loggedInUser = MyUser.fromMap(value.data());
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,30 +81,38 @@ class CheckoutScreen extends StatelessWidget {
                               .read<CheckoutBloc>()
                               .add(ConfirmCheckout(checkout: state.checkout));
 
-                          if (state.checkout.subtotal != "0.0") {
-                            EmojiAlert(
-                              animationType: ANIMATION_TYPE.TRANSITION,
-                              description: Column(
-                                children: [
-                                  Center(
-                                    child: Text(
-                                      "Order placed successfully!",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    child: Icon(
-                                      Icons.check,
-                                      color: Colors.green,
-                                      size: 50,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ).displayAlert(context);
-                          
-                          }
+                          Get.to(OrderConfirmation());
+
+                          // if (state.checkout.subtotal != "0.0") {
+                          //   EmojiAlert(
+                          //     animationType: ANIMATION_TYPE.TRANSITION,
+                          //     description: Column(
+                          //       children: [
+                          //         Center(
+                          //           child: Text(
+                          //             "Order placed successfully!",
+                          //             style: TextStyle(
+                          //                 fontWeight: FontWeight.bold),
+                          //           ),
+                          //         ),
+                          //         SizedBox(
+                          //           child: Icon(
+                          //             Icons.check,
+                          //             color: Colors.green,
+                          //             size: 50,
+                          //           ),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //   ).displayAlert(context);
+                          // }
+                        
+                        
+                        
+                        
+                        
+                        
+                        
                         });
                   }
                   return Text("Something went wrong!");
@@ -97,8 +132,34 @@ class CheckoutScreen extends StatelessWidget {
               "CUSTOMER INFORMATION",
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
             ),
-            _buildTextFormField(emailController, context, "Email"),
-            _buildTextFormField(nameController, context, "Full Name"),
+            Row(
+              children: [
+                SizedBox(
+                  width: 75,
+                  child: Text(
+                    "Name",
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                ),
+                // Text("Name :"),
+                Text(loggedInUser.username.toString()),
+              ],
+            ),
+
+            Row(
+              children: [
+                SizedBox(
+                  width: 75,
+                  child: Text(
+                    "Email",
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                ),
+                Text(loggedInUser.email.toString()),
+              ],
+            ),
+            // _buildTextFormField(emailController, context, "Email"),
+            // _buildTextFormField(nameController, context, "Full Name"),
             Text(
               "DELIVERY INFORMATION",
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
