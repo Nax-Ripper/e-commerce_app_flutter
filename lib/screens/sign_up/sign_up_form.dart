@@ -35,6 +35,10 @@ class _SignUpFormState extends State<SignUpForm> {
   final TextEditingController _password = TextEditingController();
   final TextEditingController _confirmPassword = TextEditingController();
   final TextEditingController _phoneNumber = TextEditingController();
+  final TextEditingController _address = TextEditingController();
+  final TextEditingController _city = TextEditingController();
+  final TextEditingController _Country = TextEditingController();
+  final TextEditingController _ZipCode = TextEditingController();
 
   final _auth = FirebaseAuth.instance;
 
@@ -148,6 +152,82 @@ class _SignUpFormState extends State<SignUpForm> {
                   "Phone", "Enter your Phone Number", Icon(Icons.phone)),
             ),
             SizedBox(height: getProportionateScreenHeight(30)),
+            TextFormField(
+              controller: _address,
+              textInputAction: TextInputAction.next,
+              keyboardType: TextInputType.streetAddress,
+              validator: (street) {
+                if (street!.isEmpty) {
+                  return "Enter street address";
+                }
+                return null;
+              },
+              onSaved: (street) {
+                if (_formkey.currentState!.validate()) {
+                  _address.text = street!;
+                }
+              },
+              decoration: inputDeco("Street", "Enter your Street Address",
+                  Icon(Icons.streetview)),
+            ),
+            SizedBox(height: getProportionateScreenHeight(30)),
+            TextFormField(
+              controller: _city,
+              textInputAction: TextInputAction.next,
+              keyboardType: TextInputType.streetAddress,
+              validator: (street) {
+                if (street!.isEmpty) {
+                  return "Enter city name";
+                }
+                return null;
+              },
+              onSaved: (street) {
+                if (_formkey.currentState!.validate()) {
+                  _city.text = street!;
+                }
+              },
+              decoration: inputDeco(
+                  "City", "Enter your City Name", Icon(Icons.location_city)),
+            ),
+            SizedBox(height: getProportionateScreenHeight(30)),
+            TextFormField(
+              controller: _Country,
+              textInputAction: TextInputAction.next,
+              keyboardType: TextInputType.streetAddress,
+              validator: (street) {
+                if (street!.isEmpty) {
+                  return "Enter Country Name";
+                }
+                return null;
+              },
+              onSaved: (street) {
+                if (_formkey.currentState!.validate()) {
+                  _Country.text = street!;
+                }
+              },
+              decoration: inputDeco(
+                  "Country", "Enter your Country", Icon(Icons.place_outlined)),
+            ),
+            SizedBox(height: getProportionateScreenHeight(30)),
+            TextFormField(
+              controller: _ZipCode,
+              textInputAction: TextInputAction.next,
+              keyboardType: TextInputType.number,
+              validator: (street) {
+                if (street!.isEmpty) {
+                  return "Enter Zip Code";
+                }
+                return null;
+              },
+              onSaved: (street) {
+                if (_formkey.currentState!.validate()) {
+                  _ZipCode.text = street!;
+                }
+              },
+              decoration: inputDeco(
+                  "Zip Code", "Enter your Zip Code", Icon(Icons.numbers)),
+            ),
+            SizedBox(height: getProportionateScreenHeight(30)),
             DefaultButton(
               text: "Sign In Me!",
               press: () async {
@@ -171,7 +251,11 @@ class _SignUpFormState extends State<SignUpForm> {
                       "uid": user.uid.toString(),
                       "username": _username.text,
                       "email": user.email,
-                      "phoneNumber": _phoneNumber.text
+                      "phoneNumber": _phoneNumber.text,
+                      "streetAddress": _address.text,
+                      "city": _city.text,
+                      "country": _Country.text,
+                      "zipCode": _ZipCode.text,
                     });
                     Fluttertoast.showToast(msg: "Account Created Successfully");
                     Get.to(HomeScreen());
@@ -312,10 +396,10 @@ class _SignUpFormState extends State<SignUpForm> {
     MyUser userModel = MyUser();
 
     // assign values to MyUser class
-    userModel.username = _username.text;
-    userModel.uid = user.uid.toString();
-    userModel.email = user.email;
-    userModel.phoneNumber = _phoneNumber.text;
+    // userModel.username = _username.text;
+    // userModel.uid = user.uid.toString();
+    // userModel.email = user.email;
+    // userModel.phoneNumber = _phoneNumber.text;
 
     await db.collection("users").doc(user.uid).set(userModel.toMap());
     Fluttertoast.showToast(msg: "Account Created Successfully");

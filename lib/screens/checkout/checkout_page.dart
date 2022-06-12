@@ -81,6 +81,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               .read<CheckoutBloc>()
                               .add(ConfirmCheckout(checkout: state.checkout));
 
+                          
+
                           Get.to(OrderConfirmation());
 
                           // if (state.checkout.subtotal != "0.0") {
@@ -164,10 +166,60 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               "DELIVERY INFORMATION",
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
             ),
-            _buildTextFormField(addressController, context, "Address"),
-            _buildTextFormField(cityController, context, "City"),
-            _buildTextFormField(countryController, context, "Country"),
-            _buildTextFormField(zipcodeController, context, "Zip Code"),
+            Row(
+              children: [
+                SizedBox(
+                  width: 75,
+                  child: Text(
+                    "Street Address",
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                ),
+                Text(loggedInUser.streetAddress.toString()),
+              ],
+            ),
+
+            Row(
+              children: [
+                SizedBox(
+                  width: 75,
+                  child: Text(
+                    "City",
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                ),
+                Text(loggedInUser.city.toString()),
+              ],
+            ),
+
+            Row(
+              children: [
+                SizedBox(
+                  width: 75,
+                  child: Text(
+                    "Country",
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                ),
+                Text(loggedInUser.country.toString()),
+              ],
+            ),
+            Row(
+              children: [
+                SizedBox(
+                  width: 75,
+                  child: Text(
+                    "Zip Code",
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                ),
+                Text(loggedInUser.zipCode.toString()),
+              ],
+            ),
+            // _buildTextFormField(addressController, context, "Address"),
+            // _buildTextFormField(cityController, context, "City"),
+            // _buildTextFormField(countryController, context, "Country"),
+            // _buildTextFormField(zipcodeController, context, "Zip Code"),
             Text(
               "ORDER SUMMARY",
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),

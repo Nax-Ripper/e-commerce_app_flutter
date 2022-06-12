@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_commerce/model/checkout_model.dart';
 import 'package:e_commerce/screens_Admin/admin_model/admin_product_model.dart';
 
 import '../order/order_model.dart';
@@ -17,7 +18,13 @@ class DatabaseService {
     });
   }
 
-  Stream<List<Order>> getOrders() {
+  // Stream<List<Order>> getOrders() {
+  //   return _firebaseFirestore.collection("Orders").snapshots().map((snapshot) {
+  //     return snapshot.docs.map((docs) => Order.formSnapshot(docs)).toList();
+  //   });
+  // }
+
+    Stream<List<Order>> getOrders() {
     return _firebaseFirestore.collection("Orders").snapshots().map((snapshot) {
       return snapshot.docs.map((docs) => Order.formSnapshot(docs)).toList();
     });
@@ -35,6 +42,7 @@ class DatabaseService {
   }
 
   Future<void> addProduct(AdminProduct product) {
+    _firebaseFirestore.collection("products").add(product.toMap());
     return _firebaseFirestore.collection("Adminproducts").add(product.toMap());
   }
 
@@ -46,14 +54,26 @@ class DatabaseService {
     print(field);
     print(newValue);
     double value = newValue;
-    var fb = await _firebaseFirestore
+     await _firebaseFirestore
         .collection("Adminproducts")
-        .where("id", isEqualTo: product.id)
+        .where("name", isEqualTo: product.name)
         .get()
         .then((qsnap) {
       print(qsnap.docs.isEmpty);
       qsnap.docs.first.reference.update({field: newValue});
     });
+
+
+     await _firebaseFirestore
+        .collection("products")
+        .where("name", isEqualTo: product.name)
+        .get()
+        .then((qsnap) {
+      print(qsnap.docs.isEmpty);
+      qsnap.docs.first.reference.update({field: newValue});
+    });
+
+
   }
 
   Future<void> updateOrder(Order order, String field, dynamic value) async {

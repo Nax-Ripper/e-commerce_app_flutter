@@ -123,7 +123,7 @@ class AdminProductCard extends StatelessWidget {
                     height: 70,
                     width: 70,
                     child: Image.network(
-                      adminProduct.imageUrl,
+                      adminProduct.imageURL,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -188,12 +188,7 @@ class AdminProductCard extends StatelessWidget {
                               var qtyy = double.parse(qty);
                               var dqty = qtyy.truncate();
                               productContoller.saveNewProductQuantity(
-                                  adminProduct,
-                                  "quantity",
-                                  value
-                                  
-                                  
-                                  );
+                                  adminProduct, "quantity", value);
                             },
                           ),
                           Text(

@@ -109,11 +109,11 @@ class Order extends Equatable {
   static List<Order> orders = [
     Order(
         id: 1,
-        customerId: 2556,
+        customerId: 2556, 
         productsIds: [1, 2],
         deliveryFee: 10,
-        subtotal: 20,
-        totall: 30,
+        subtotal: 20,//
+        totall: 30,//
         isAccepted: false,
         isDelivered: false,
         isCancled: false,

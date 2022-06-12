@@ -14,6 +14,9 @@ class CheckoutLoaded extends CheckoutState {
   final String? subtotal;
   final String? deliveryFee;
   final String? total;
+  //final String? userAddress;
+    //final MyUser? address;
+
   late final Checkout checkout;
 
   CheckoutLoaded({
@@ -21,15 +24,23 @@ class CheckoutLoaded extends CheckoutState {
     this.subtotal,
     this.deliveryFee,
     this.total,
+    //this.userAddress
+      //this.address
+
     // this.checkout,
   }) {
     checkout = Checkout(
-        products: products!,
-        subtotal: subtotal!,
-        deliveryFee: deliveryFee!,
-        total: total!
-        
-        );
+      products: products!,
+      subtotal: subtotal!,
+      deliveryFee: deliveryFee!,
+      total: total!,
+      isAccepted: false,
+      isCancled: false,
+      isDelivered: false,
+      userAddress: "test",
+      userid: FirebaseAuth.instance.currentUser!.uid,
+      // userAddress: userAddress!
+    );
   }
 
   @override

@@ -70,7 +70,7 @@ class HomeScreen extends StatelessWidget {
                   return Center(
                     child: CircularProgressIndicator(),
                   );
-                } else if (state is ProductLoaded) {
+                }  if (state is ProductLoaded) {
                   return ProductCarousel(
                     productList: state.products
                         .where((element) => element.isRecomended)

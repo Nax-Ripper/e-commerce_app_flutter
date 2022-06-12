@@ -149,8 +149,8 @@ class _ProductScreenState extends State<ProductScreen> {
                 initiallyExpanded: true,
                 children: [
                   ListTile(
-                    title: Text(
-                        "Lorem ipsum dolor sit amet. Non nulla quaerat qui labore dolor ut rerum totam et quae nisi aut provident dicta. Non asperiores aliquid non dignissimos omnis qui expedita vitae ad deleniti corrupti. Est rerum doloribus qui consectetur saepe quo fugiat ipsa cum doloremque quasi.Sit saepe omnis est magnam molestiae fugiat accusamus est laudantium praesentium ut magnam tenetur qui ullam molestias est minima consectetur! Rem suscipit neque At praesentium cumque ut odit tenetur non excepturi reiciendis.Aut aspernatur animi eum architecto voluptates qui earum sapiente. Qui provident volupate ea totam sapiente cum inventore blanditiis At tempora dolores."),
+                    title: Text(widget.product.description)
+                    
                   )
                 ],
               ),
@@ -164,8 +164,8 @@ class _ProductScreenState extends State<ProductScreen> {
                 ),
                 children: [
                   ListTile(
-                    title: Text(
-                        "Lorem ipsum dolor sit amet. Non nulla quaerat qui labore dolor ut rerum totam et quae nisi aut provident dicta. Non asperiores aliquid non dignissimos omnis qui expedita vitae ad deleniti corrupti. Est rerum doloribus qui consectetur saepe quo fugiat ipsa cum doloremque quasi.Sit saepe omnis est magnam molestiae fugiat accusamus est laudantium praesentium ut magnam tenetur qui ullam molestias est minima consectetur! Rem suscipit neque At praesentium cumque ut odit tenetur non excepturi reiciendis.Aut aspernatur animi eum architecto voluptates qui earum sapiente. Qui provident volupate ea totam sapiente cum inventore blanditiis At tempora dolores."),
+                    title: 
+                    Text("- Only Online Payment is available \n- Our Rider will deliver this item to your doorsteps")
                   )
                 ],
               ),

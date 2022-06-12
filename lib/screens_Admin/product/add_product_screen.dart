@@ -22,6 +22,7 @@ class AddProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<String> dropCategories = ["Soft Drinks", "Biscuits", "Stationery"];
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -97,10 +98,10 @@ class AddProductScreen extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                _buildTextFormField(
-                    hinText: "Product ID",
-                    name: "id",
-                    pController: _productController),
+                // _buildTextFormField(
+                //     hinText: "Product ID",
+                //     name: "id",
+                //     pController: _productController),
                 _buildTextFormField(
                     hinText: "Product Name",
                     name: "name",
@@ -109,10 +110,24 @@ class AddProductScreen extends StatelessWidget {
                     hinText: "Product Description",
                     name: "description",
                     pController: _productController),
-                _buildTextFormField(
-                    hinText: "Product Category",
-                    name: "category",
-                    pController: _productController),
+
+                // _buildTextFormField(
+                //     hinText: "Product Category",
+                //     name: "category",
+                //     pController: _productController),
+                DropdownButtonFormField(
+                  iconSize: 20,
+                  decoration:
+                      const InputDecoration(hintText: "Product Category"),
+                  items: dropCategories.map((e) {
+                    return DropdownMenuItem(value: e, child: Text(e));
+                  }).toList(),
+                  onChanged: (value) {
+                    _productController.newProduct.update(
+                        "category", (_) => value,
+                        ifAbsent: () => value);
+                  },
+                ),
                 const SizedBox(height: 20),
                 _BuildSlider(
                   title: "Price",
@@ -156,17 +171,18 @@ class AddProductScreen extends StatelessWidget {
                           AdminProduct(
                               description:
                                   _productController.newProduct["description"],
-                              id: int.parse(
-                                  _productController.newProduct["id"]),
+                              id: _productController.newProduct["id"],
                               name: _productController.newProduct["name"],
                               category:
                                   _productController.newProduct["category"],
-                              imageUrl:
+                              imageURL:
                                   _productController.newProduct["imageUrl"],
-                              isRecomended:
-                                  _productController.newProduct["isRecomended"],
+                              isRecomended: _productController
+                                      .newProduct["isRecomended"] ??
+                                  false,
                               isPopular:
-                                  _productController.newProduct["isPopular"],
+                                  _productController.newProduct["isPopular"] ??
+                                      false,
                               price: double.parse(_productController
                                   .newProduct["price"]
                                   .toString()),
@@ -174,6 +190,7 @@ class AddProductScreen extends StatelessWidget {
                               // quantity: int.parse(_productController.newProduct["quantity"].toString()),
                               ),
                         );
+                        Navigator.pop(context);
                       } catch (e) {
                         Fluttertoast.showToast(msg: "Upload Unsuccessful");
                       }

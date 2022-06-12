@@ -1,3 +1,4 @@
+import 'package:e_commerce/model/Product_model.dart';
 import 'package:e_commerce/screens_Admin/admin_model/admin_product_model.dart';
 import 'package:e_commerce/screens_Admin/services/database_service.dart';
 import 'package:get/state_manager.dart';
@@ -13,6 +14,7 @@ class ProductController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     adminProduct.bindStream(databaseService.getProducts());
+    
     super.onInit();
   }
 
