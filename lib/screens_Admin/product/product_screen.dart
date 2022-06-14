@@ -138,7 +138,7 @@ class AdminProductCard extends StatelessWidget {
                           const Text(
                             "Price",
                             style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                                fontSize: 14, fontWeight: FontWeight.bold),
                           ),
                           Slider(
                             value: adminProduct.price,
@@ -169,7 +169,7 @@ class AdminProductCard extends StatelessWidget {
                           const Text(
                             "Qty",
                             style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                                fontSize: 14, fontWeight: FontWeight.bold),
                           ),
                           Slider(
                             value: adminProduct.quantity.toDouble(),

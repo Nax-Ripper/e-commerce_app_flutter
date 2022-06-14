@@ -9,11 +9,14 @@ abstract class CheckoutEvent extends Equatable {
 
 class UpdateCheckout extends CheckoutEvent {
   final Cart? cart;
+  final PaymentMethod? paymentMethod;
 
-  UpdateCheckout({this.cart});
+  UpdateCheckout({
+    this.cart,
+    this.paymentMethod
+  });
 
-  List<Object?> get props => [cart];
-
+  List<Object?> get props => [cart,paymentMethod];
 }
 
 class ConfirmCheckout extends CheckoutEvent {
@@ -22,7 +25,6 @@ class ConfirmCheckout extends CheckoutEvent {
     required this.checkout,
   });
 
-
-   @override
-  List<Object> get props => [checkout];
+  @override
+  List<Object> get props => [checkout, ];
 }

@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce/bloc/cart/cart_bloc.dart';
+import 'package:e_commerce/bloc/payment/payment_bloc.dart';
 import 'package:e_commerce/model/Product_model.dart';
 import 'package:e_commerce/model/cart_model.dart';
 import 'package:e_commerce/model/checkout_model.dart';
+import 'package:e_commerce/model/payment_method_model.dart';
 import 'package:e_commerce/model/user_model.dart';
 import 'package:e_commerce/repositories/checkout/checkout_repo.dart';
 import 'package:equatable/equatable.dart';
@@ -18,25 +20,29 @@ part 'checkout_state.dart';
 class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
   final CartBloc _cartBloc;
   final CheckoutRepo _checkoutRepo;
+  final PaymentBloc _paymentBloc;
   StreamSubscription? _cartSubs;
   StreamSubscription? _checkoutSubs;
+  StreamSubscription? _paymentSubscription;
   User? user = FirebaseAuth.instance.currentUser;
   MyUser loggedUser = const MyUser();
 
   void initState() {
-    
-     FirebaseFirestore.instance
+    FirebaseFirestore.instance
         .collection("users")
         .doc(user!.uid)
         .get()
         .then((value) {
       loggedUser = MyUser.fromMap(value.data());
-      
     });
   }
 
-  CheckoutBloc({required CartBloc cartBloc, required CheckoutRepo checkoutRepo ,})
-      : _cartBloc = cartBloc,
+  CheckoutBloc({
+    required CartBloc cartBloc,
+    required CheckoutRepo checkoutRepo,
+    required PaymentBloc paymentBloc,
+  })  : _cartBloc = cartBloc,
+        _paymentBloc = paymentBloc,
         _checkoutRepo = checkoutRepo,
         super(cartBloc.state is CartLoaded
             ? CheckoutLoaded(
@@ -47,8 +53,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
                     (cartBloc.state as CartLoaded).cart.subtotal.toString(),
                 total: (cartBloc.state as CartLoaded).cart.total.toString(),
                 // userAddress: MyUser.userAddress()
-                
-                )
+              )
             : CheckoutLoading()) {
     on<UpdateCheckout>(_onUpdateCheckout);
     on<ConfirmCheckout>(_onConfirmCheckout);
@@ -58,6 +63,12 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
         add(UpdateCheckout(cart: state.cart));
       }
     });
+
+    _paymentSubscription = _paymentBloc.stream.listen((state) {
+      if (state is PaymentLoaded) {
+        add(UpdateCheckout(paymentMethod: state.paymentMethod));
+      }
+    });
   }
 
   void _onUpdateCheckout(UpdateCheckout event, Emitter<CheckoutState> emit) {
@@ -65,17 +76,15 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
       final state = this.state as CheckoutLoaded;
       emit(
         CheckoutLoaded(
-            deliveryFee: event.cart?.deliveryFee.toString() ??
-                state.deliveryFee.toString(),
-            products: event.cart?.cartProducts ?? state.products,
-            subtotal:
-                event.cart?.subtotal.toString() ?? state.subtotal.toString(),
-            total: event.cart?.total.toString() ?? state.total.toString(),
-            // userAddress: MyUser.userAddress()
-            ),
-            
-
-          
+          deliveryFee: event.cart?.deliveryFee.toString() ??
+              state.deliveryFee.toString(),
+          products: event.cart?.cartProducts ?? state.products,
+          subtotal:
+              event.cart?.subtotal.toString() ?? state.subtotal.toString(),
+          total: event.cart?.total.toString() ?? state.total.toString(),
+          paymentMethod: event.paymentMethod ?? state.paymentMethod,
+          // userAddress: MyUser.userAddress()
+        ),
       );
     }
   }
@@ -89,7 +98,9 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
       if (event.checkout.subtotal != "0.0") {
         print(event.checkout.subtotal);
         try {
-          await _checkoutRepo.addCheckout(event.checkout ,);
+          await _checkoutRepo.addCheckout(
+            event.checkout,
+          );
           print("Done");
         } catch (_) {}
       } else {
@@ -101,6 +112,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
   @override
   Future<void> close() {
     _cartSubs?.cancel();
+    _paymentSubscription?.cancel();
     return super.close();
   }
 }

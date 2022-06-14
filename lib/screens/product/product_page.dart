@@ -149,7 +149,9 @@ class _ProductScreenState extends State<ProductScreen> {
                 initiallyExpanded: true,
                 children: [
                   ListTile(
-                    title: Text(widget.product.description)
+                    title: Text(widget.product.description),
+
+                    subtitle: Text("Available items : ${widget.product.quantity}",style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold), ),
                     
                   )
                 ],
@@ -165,7 +167,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 children: [
                   ListTile(
                     title: 
-                    Text("- Only Online Payment is available \n- Our Rider will deliver this item to your doorsteps")
+                    Text("- Online Payment & COD is available \n- Our Rider will deliver this item to your doorsteps")
                   )
                 ],
               ),

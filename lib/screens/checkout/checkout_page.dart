@@ -1,13 +1,20 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce/bloc/checkout/checkout_bloc.dart';
 import 'package:e_commerce/constants.dart';
+import 'package:e_commerce/model/payment_method_model.dart';
 import 'package:e_commerce/model/user_model.dart';
+import 'package:e_commerce/screens/checkout/payment_selection_page.dart';
+import 'package:e_commerce/screens/home/home_page.dart';
 import 'package:e_commerce/screens/order_conformation/order_conformation_screen.dart';
 import 'package:e_commerce/widget/custom_appbar.dart';
+import 'package:e_commerce/widget/google_pay.dart';
 import 'package:e_commerce/widget/order_summary.dart';
 import 'package:emoji_alert/arrays.dart';
+import 'package:emoji_alert/constants.dart';
 import 'package:emoji_alert/emoji_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -66,56 +73,145 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     );
                   }
                   if (state is CheckoutLoaded) {
-                    return ElevatedButton(
-                        style: ElevatedButton.styleFrom(primary: Colors.white),
-                        // ignore: prefer_const_constructors
-                        child: Text(
-                          "ORDER NOW !",
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black),
-                        ),
-                        onPressed: () {
-                          context
-                              .read<CheckoutBloc>()
-                              .add(ConfirmCheckout(checkout: state.checkout));
+                    if (Platform.isAndroid) {
+                      switch (state.paymentMethod) {
+                        case PaymentMethod.google_pay:
+                          return GestureDetector(
+                            child: GooglePay(
+                              product: state.products!,
+                              total: state.total!,
+                              // db: context.read<CheckoutBloc>().add(ConfirmCheckout(checkout: state.checkout))
+                            ),
+                            onTap: () {
+                              context.read<CheckoutBloc>().add(
+                                  ConfirmCheckout(checkout: state.checkout));
 
-                          
+                              EmojiAlert(
+                                      animationType: ANIMATION_TYPE.TRANSITION,
+                                      emojiType: EMOJI_TYPE.LAUGHING,
+                                      cancelable: false,
+                                      enableMainButton: true,
+                                      mainButtonText: Text("OK"),
+                                      onMainButtonPressed: () {
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        HomeScreen()),
+                                            ModalRoute.withName(
+                                                '/') // Replace this with your root screen's route name (usually '/')
+                                            );
+                                      },
+                                      description: Text(
+                                          "Order placed Successfully!",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.green[800])))
+                                  .displayAlert(context);
+                            },
+                          );
 
-                          Get.to(OrderConfirmation());
+                        case PaymentMethod.COD:
+                          return ElevatedButton(
+                            onPressed: () async {
 
-                          // if (state.checkout.subtotal != "0.0") {
-                          //   EmojiAlert(
-                          //     animationType: ANIMATION_TYPE.TRANSITION,
-                          //     description: Column(
-                          //       children: [
-                          //         Center(
-                          //           child: Text(
-                          //             "Order placed successfully!",
-                          //             style: TextStyle(
-                          //                 fontWeight: FontWeight.bold),
-                          //           ),
-                          //         ),
-                          //         SizedBox(
-                          //           child: Icon(
-                          //             Icons.check,
-                          //             color: Colors.green,
-                          //             size: 50,
-                          //           ),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //   ).displayAlert(context);
-                          // }
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        });
+                              context.read<CheckoutBloc>().add(
+                                  ConfirmCheckout(checkout: state.checkout));
+
+                                  if(state.checkout.subtotal!="0.0"){
+                                      EmojiAlert(
+                                      animationType: ANIMATION_TYPE.TRANSITION,
+                                      emojiType: EMOJI_TYPE.LAUGHING,
+                                      cancelable: false,
+                                      enableMainButton: true,
+                                      mainButtonText: Text("OK"),
+                                      onMainButtonPressed: () {
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        HomeScreen()),
+                                            ModalRoute.withName(
+                                                '/') // Replace this with your root screen's route name (usually '/')
+                                            );
+                                      },
+                                      description: Text(
+                                          "Order placed Successfully!",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.green[800])))
+                                  .displayAlert(context);
+
+
+                                  }
+
+                            
+                              // Get.to(OrderConfirmation());
+                            },
+                            child: Text("Pay with Cash On Delivery"),
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.black),
+                            ),
+                          );
+                        default:
+                          return GooglePay(
+                            product: state.products!,
+                            total: state.total!,
+                          );
+                      }
+                    } else if (Platform.isIOS) {
+                      // return  GooglePay(product: state.products!, total: state.total!,);
+                    } else {
+                      return ElevatedButton(
+                          onPressed: () => Get.to(PaymentSelection()),
+                          child: Text("CHOOSE PAYMENT"));
+                    }
+
+                    // return ElevatedButton(
+                    //     style: ElevatedButton.styleFrom(primary: Colors.white),
+                    //     // ignore: prefer_const_constructors
+                    //     child: Text(
+                    //       "ORDER NOW !",
+                    //       style: TextStyle(
+                    //           fontSize: 18,
+                    //           fontWeight: FontWeight.bold,
+                    //           color: Colors.black),
+                    //     ),
+                    //     onPressed: () {
+                    //       context
+                    //           .read<CheckoutBloc>()
+                    //           .add(ConfirmCheckout(checkout: state.checkout));
+
+                    //       Get.to(OrderConfirmation());
+
+                    //       // if (state.checkout.subtotal != "0.0") {
+                    //       //   EmojiAlert(
+                    //       //     animationType: ANIMATION_TYPE.TRANSITION,
+                    //       //     description: Column(
+                    //       //       children: [
+                    //       //         Center(
+                    //       //           child: Text(
+                    //       //             "Order placed successfully!",
+                    //       //             style: TextStyle(
+                    //       //                 fontWeight: FontWeight.bold),
+                    //       //           ),
+                    //       //         ),
+                    //       //         SizedBox(
+                    //       //           child: Icon(
+                    //       //             Icons.check,
+                    //       //             color: Colors.green,
+                    //       //             size: 50,
+                    //       //           ),
+                    //       //         ),
+                    //       //       ],
+                    //       //     ),
+                    //       //   ).displayAlert(context);
+                    //       // }
+                    //     });
+
                   }
                   return Text("Something went wrong!");
                 },
@@ -220,6 +316,44 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             // _buildTextFormField(cityController, context, "City"),
             // _buildTextFormField(countryController, context, "Country"),
             // _buildTextFormField(zipcodeController, context, "Zip Code"),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+              height: 60,
+              alignment: Alignment.bottomCenter,
+              decoration: BoxDecoration(color: Colors.black),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Center(
+                    child: TextButton(
+                      onPressed: () {
+                        Get.to(PaymentSelection());
+                        // Navigator.pushNamed(
+                        //   context,
+                        //   '/payment-selection',
+                        // );
+                      },
+                      child: Text(
+                        'SELECT A PAYMENT METHOD',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline6!
+                            .copyWith(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.arrow_forward,
+                      color: Colors.white,
+                    ),
+                  )
+                ],
+              ),
+            ),
             Text(
               "ORDER SUMMARY",
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),

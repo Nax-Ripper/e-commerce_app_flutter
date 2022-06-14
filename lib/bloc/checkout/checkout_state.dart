@@ -14,8 +14,9 @@ class CheckoutLoaded extends CheckoutState {
   final String? subtotal;
   final String? deliveryFee;
   final String? total;
+  final PaymentMethod paymentMethod;
   //final String? userAddress;
-    //final MyUser? address;
+  //final MyUser? address;
 
   late final Checkout checkout;
 
@@ -24,8 +25,9 @@ class CheckoutLoaded extends CheckoutState {
     this.subtotal,
     this.deliveryFee,
     this.total,
+    this.paymentMethod = PaymentMethod.COD,
     //this.userAddress
-      //this.address
+    //this.address
 
     // this.checkout,
   }) {
@@ -39,10 +41,11 @@ class CheckoutLoaded extends CheckoutState {
       isDelivered: false,
       userAddress: "test",
       userid: FirebaseAuth.instance.currentUser!.uid,
+      
       // userAddress: userAddress!
     );
   }
 
   @override
-  List<Object?> get props => [products, subtotal, deliveryFee, total];
+  List<Object?> get props => [products, subtotal, deliveryFee, total,paymentMethod];
 }

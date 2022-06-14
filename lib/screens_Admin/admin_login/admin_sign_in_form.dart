@@ -2,6 +2,7 @@
 
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce/constants.dart';
 import 'package:e_commerce/screens/home/home_page.dart';
 import 'package:e_commerce/screens_Admin/admin_home/home_screen.dart';
@@ -34,9 +35,7 @@ class _AdminSignInFormState extends State<AdminSignInForm> {
 
   @override
   Widget build(BuildContext context) {
-  
     return Form(
-
       key: _formKey,
       child: Padding(
         padding:
@@ -160,6 +159,12 @@ class _AdminSignInFormState extends State<AdminSignInForm> {
                   // _formKey.currentState!.save();
                   print(_email.text.toString());
                   print(_password.text.toString());
+
+                  // await _auth.signInWithEmailAndPassword(
+                  //     email: _email.text, password: _password.text);
+
+                    
+
                   await _auth
                       .signInWithEmailAndPassword(
                           email: _email.text, password: _password.text)

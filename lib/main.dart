@@ -3,6 +3,7 @@
 import 'package:e_commerce/bloc/cart/cart_bloc.dart';
 import 'package:e_commerce/bloc/category/category_bloc.dart';
 import 'package:e_commerce/bloc/checkout/checkout_bloc.dart';
+import 'package:e_commerce/bloc/payment/payment_bloc.dart';
 import 'package:e_commerce/bloc/product/product_bloc.dart';
 import 'package:e_commerce/constants.dart';
 import 'package:e_commerce/repositories/categories/category_repo.dart';
@@ -15,8 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,26 +38,30 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (_) => CartBloc()..add(CartStarted()),
         ),
-
         BlocProvider(
-              create: (_) => CategoryBloc(
-                categoryRepository: CategoryRepo(),
-              )..add(
-                  LoadCategories(),
-                ),
+          create: (_) => CategoryBloc(
+            categoryRepository: CategoryRepo(),
+          )..add(
+              LoadCategories(),
             ),
-
-            BlocProvider(
-              create: (_) => ProductBloc(
-                productRepository: ProductRepo(),
-              )..add(
-                  LoadProduct(),
-                ),
+        ),
+        BlocProvider(create: (_) => PaymentBloc()..add(LoadPaymentMethod())),
+        BlocProvider(
+          create: (_) => ProductBloc(
+            productRepository: ProductRepo(),
+          )..add(
+              LoadProduct(),
             ),
-
-            BlocProvider(
-              create: (context) => CheckoutBloc(cartBloc: context.read<CartBloc>(),checkoutRepo: CheckoutRepo(),),
-            )
+        ),
+        BlocProvider(
+          create: (context) => CheckoutBloc(
+            cartBloc: context.read<CartBloc>(),
+            paymentBloc: context.read<PaymentBloc>(),
+            checkoutRepo: CheckoutRepo(),
+            
+          ),
+        ),
+        
       ],
       child: GetMaterialApp(
           title: 'Flutter Demo',
@@ -76,10 +79,8 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
           ),
           home:
-          // CheckoutScreen()
-          SplashScreen()
-          
-          ),
+              // CheckoutScreen()
+              SplashScreen()),
     );
   }
 }
